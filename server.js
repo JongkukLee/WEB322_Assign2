@@ -6,7 +6,7 @@
 *
 * Name: _Jongkuk Lee__________ Student ID: _127730158____ Date: _2017-05-26_____
 *
-* Online (Heroku) Link: __https://arcane-fjord-78560.herokuapp.com/______________ß
+* Online (Heroku) Link: __https://arcane-fjord-78560.herokuapp.com/______________
 ********************************************************************************/
 
 var express = require("express");
@@ -28,7 +28,7 @@ app.get("/about", function(req,res){
   res.sendFile(path.join(__dirname + "/views/about.html"));
 });
 
-// to-do: add	the	line:	app.use(express.static('public'));
+// to-do: 
 app.use(express.static('public'));
 
 // to-do: 
