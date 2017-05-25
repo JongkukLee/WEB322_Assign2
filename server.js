@@ -4,10 +4,9 @@
 * of this assignment has been copied manually or electronically from any other source
 * (including 3rd party web sites) or distributed to other students.
 *
-* Name: ______________________ Student ID: ______________ Date: ________________
+* Name: _Jongkuk Lee__________ Student ID: _127730158____ Date: _2017-05-26_____
 *
-* Online (Heroku) Link: __https://arcane-fjord-78560herokuapp.com______________________________________________________
-*
+* Online (Heroku) Link: __https://arcane-fjord-78560.herokuapp.com/______________ß
 ********************************************************************************/
 
 var express = require("express");
@@ -32,6 +31,7 @@ app.get("/about", function(req,res){
 // to-do: add	the	line:	app.use(express.static('public'));
 app.use(express.static('public'));
 
+// to-do: 
 var path = require("path");
 
 // setup http server to listen on HTTP_PORT
