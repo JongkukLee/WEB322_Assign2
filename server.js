@@ -41,53 +41,36 @@ app.get("/employees", (req, res) =>{
   {
     dataService.getEmployeesByStatus(req.query.status).then( (data) =>
     {
-      for(var i = 0; i < data.length; i++)
-      {
-        //var employee = JSON.stringify(data[i]);
-        res.json(data);
-        //res.json({employee});
-      }
+      res.json(data);
     })
     .catch( (errorMsg)=> {
       res.json({message: errorMsg});
     });
-    //res.json({message: req.query.status});
   }
   else if(req.query.manager)
   {
     dataService.getEmployeesByManager(req.query.manager).then( (data) =>
     {
-      for(var i = 0; i < data.length; i++)
-      {
-        res.json(data);
-      }
+      res.json(data);
     })
     .catch( (errorMsg)=> {
       res.json({message: errorMsg});
     });    
-    // res.json({message: req.query.manager});
   }
   else if(req.query.department)
   {
     dataService.getEmployeesByDepartment(req.query.department).then( (data) =>
     {
-      for(var i = 0; i < data.length; i++)
-      {
-        res.json(data);
-      }
+      res.json(data);
     })
     .catch( (errorMsg)=> {
       res.json({message: errorMsg});
     });     
-    //res.json({message: req.query.department});
   }
   else{
     dataService.getAllEmployees().then( (data) =>
     {
-      //for(var i = 0; i < data.length; i++)
-      //{
-        res.json(data);
-      //}
+      res.json(data);
     })
     .catch( (errorMsg)=> {
       res.json({message: errorMsg});
@@ -100,45 +83,33 @@ app.get("/employees", (req, res) =>{
 app.get("/employee/:empNum", (req,res) => {
     dataService.getEmployeeByNum(req.params.empNum).then( (data) =>
     {
-      for(var i = 0; i < data.length; i++)
-      {
-        res.json(data);
-      }
+      res.json(data);
     })
     .catch( (errorMsg)=> {
       res.json({message: errorMsg});
     });
-    //res.json({message: req.params.empNum});
 });
 
 // setup route to listen on /managers 
 app.get("/managers", (req,res) => {
     dataService.getManagers().then( (data) =>
     {
-      for(var i = 0; i < data.length; i++)
-      {
-        res.json(data);
-      }
+      res.json(data);
     })
     .catch( (errorMsg)=> {
       res.json({message: errorMsg});
     });
-    //res.send("all the employees whose isManager property  is set to true");
 });
 
 // setup route to listen on /departments  
 app.get("/departments", (req,res) => {
     dataService.getDepartments().then( (data) =>
     {
-      for(var i = 0; i < data.length; i++)
-      {
-        res.json(data);
-      }
+      res.json(data);
     })
     .catch( (errorMsg)=> {
       res.json({message: errorMsg});
     });  
-    //res.send("all of the departments within the departments.json file");
 });
 
 // setup the no matching route

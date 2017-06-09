@@ -1,3 +1,5 @@
+let VERBOSE = true;
+
 // use File System module
 const fs = require('fs');
 
@@ -14,16 +16,18 @@ module.exports.initialize = () =>
             fs.readFile('./data/employees.json', (err, data) => {
                 if (err) throw err;
                 employees = JSON.parse(data);
-                console.log("data-service::initialize()::Employee Count: " + employees.length); 
-                //console.log(employees[0]);                               
+                // log
+                if(VERBOSE) console.log("data-service::initialize()::Employee Count: " + employees.length);
+                 
                 if(employees.length == 0)
                     reject("No data from employees.json was returned");
             });        
             fs.readFile('./data/departments.json', (err, data) => {
                 if (err) throw err;
                 departments = JSON.parse(data);
-                console.log("data-service::initialize()::Departments Count: " + departments.length);  
-                //console.log(departments[0]);                              
+                // log                
+                if(VERBOSE) console.log("data-service::initialize()::Departments Count: " + departments.length);
+
                 if (departments.length == 0)
                     reject("No data from departments.json was returned");  
                 else
@@ -43,7 +47,9 @@ module.exports.getAllEmployees = () =>
 {
     return new Promise( (resolve, reject) =>
     {
-        console.log("data-service::getAllEmployees()::Employee Count: " + employees.length); 
+        // log        
+        if(VERBOSE) console.log("data-service::getAllEmployees()::Employee Count: " + employees.length); 
+
         if(employees.length > 0)
             resolve(employees); 
         else
@@ -65,7 +71,9 @@ module.exports.getEmployeesByStatus = (status) =>
                 j++;
             }
         }
-        console.log("data-service::getEmployeesByStatus()::Employee Count: " + (j + 1)); 
+        // log        
+        if(VERBOSE) console.log("data-service::getEmployeesByStatus()::Employee Count: " + (j + 1)); 
+
         if(j > 0) resolve(employeesByStatus);
         else reject("no results returned");
     });
@@ -85,7 +93,9 @@ module.exports.getEmployeesByDepartment = (department) =>
                 j++;
             }
         }
-        console.log("data-service::getEmployeesByDepartment()::Employee Count: " + (j + 1)); 
+        // log         
+        if(VERBOSE) console.log("data-service::getEmployeesByDepartment()::Employee Count: " + (j + 1)); 
+
         if(j > 0) resolve(employeesByDept);
         else reject("no results returned");
     });
@@ -104,7 +114,9 @@ module.exports.getEmployeesByManager = (manager) =>
                 j++;
             }
         }
-        console.log("data-service::getEmployeesByManager()::Employee Count: " + (j + 1)); 
+        // log         
+        if(VERBOSE) console.log("data-service::getEmployeesByManager()::Employee Count: " + (j + 1)); 
+
         if(j > 0) resolve(empByManager);
         else reject("no results returned");
     });
@@ -124,7 +136,9 @@ module.exports.getEmployeeByNum = (num) =>
                 j++;
             }
         }
-        console.log("data-service::getEmployeeByNum()::Employee Count: " + j); 
+        // log         
+        if(VERBOSE) console.log("data-service::getEmployeeByNum()::Employee Count: " + j); 
+
         if(j > 0) resolve(employeesByNum);
         else reject("no results returned");
     });
@@ -144,7 +158,9 @@ module.exports.getManagers = () =>
                 j++;
             }
         }
-        console.log("data-service::getManagers()::Employee Count: " + j); 
+        // log         
+        if(VERBOSE) console.log("data-service::getManagers()::Employee Count: " + j); 
+
         if(j > 0) resolve(managers);
         else reject("no results returned");
     });
@@ -154,33 +170,12 @@ module.exports.getDepartments = () =>
 {
     return new Promise( (resolve, reject) =>
     {
-        console.log("data-service::getDepartments()::Department Count: " + departments.length); 
+        // log         
+        if(VERBOSE) console.log("data-service::getDepartments()::Department Count: " + departments.length); 
+
         if(departments.length > 0)
             resolve(departments); 
         else
             reject("no results returned");
-    });
-}
- 
-
-
-
-var message = "";
-
-module.exports.setMessage = (msg) => {
-    return new Promise((resolve,reject)=>{
-        message = msg;
-        resolve();
-    });
-   
-};
-
-module.exports.getMessage = () => {
-    return new Promise((resolve,reject)=>{
-        if(message.length > 0){
-            resolve(message)
-        }else{
-            reject("Oh No!");
-        }
     });
 }
