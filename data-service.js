@@ -12,34 +12,33 @@ module.exports.initialize = () =>
 {
     return new Promise( (resolve, reject) =>
     {
-        try{
-            fs.readFile('./data/employees.json', (err, data) => {
-                if (err) throw err;
+         fs.readFile('./data/employees.json', (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
                 employees = JSON.parse(data);
-                empCount = employees.length;
-                // log
-                if(VERBOSE) console.log("data-service::initialize()::Employee Count: " + employees.length);
-                 
-                if(employees.length == 0)
+                //console.log("data-service::initialize()::Employee Count: " + employees.length); 
+                //console.log(employees[0]);                               
+                if (employees.length == 0) {
                     reject("No data from employees.json was returned");
-            });        
-            fs.readFile('./data/departments.json', (err, data) => {
-                if (err) throw err;
-                departments = JSON.parse(data);
-                // log                
-                if(VERBOSE) console.log("data-service::initialize()::Departments Count: " + departments.length);
+                } else {
 
-                if (departments.length == 0)
-                    reject("No data from departments.json was returned");  
-                else
-                    resolve();              
-            });
-        }
-        // If there was an error at any time during this process, invoke the reject 
-        catch(ex)
-        {
-            reject("unable to read file");
-        }
+                    fs.readFile('./data/departments.json', (err, data) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            departments = JSON.parse(data);
+                            //console.log("data-service::initialize()::Departments Count: " + departments.length);  
+                            //console.log(departments[0]);                              
+                            if (departments.length == 0)
+                                reject("No data from departments.json was returned");
+                            else
+                                resolve();
+                        }
+                    });
+                }
+            }
+         });
     });
 };
 
