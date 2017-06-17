@@ -6,7 +6,7 @@ const fs = require('fs');
 // declare global variable
 var employees = [];
 var departments = [];
-
+var empCount = 0;
 // Asynchronously reads the entire contents of a file
 module.exports.initialize = () =>
 {
@@ -16,6 +16,7 @@ module.exports.initialize = () =>
             fs.readFile('./data/employees.json', (err, data) => {
                 if (err) throw err;
                 employees = JSON.parse(data);
+                empCount = employees.length;
                 // log
                 if(VERBOSE) console.log("data-service::initialize()::Employee Count: " + employees.length);
                  
@@ -41,6 +42,41 @@ module.exports.initialize = () =>
         }
     });
 };
+
+// add employee
+module.exports.addEmploye = (employeeData) =>
+{
+    return new Promise( (resolve, reject) =>
+    {
+        empCount++;
+        employeeData.employeeNum = empCount;
+        if(employeeData.isManager == "on") employeeData.isManager = true;
+        else employeeData.isManager = false;
+        employees.push(employeeData);
+        resolve();     
+    });
+}
+
+// update employee
+module.exports.updateEmployee = (employeeData) =>
+{
+    return new Promise( (resolve, reject) =>
+    {
+        for(var i = 0; i < employees.length; i++)
+        {
+            if(employees[i].employeeNum == employeeData.employeeNum)
+            {
+                // When the matching employee is found, 
+                // overwrite it with the new employee
+                if(employeeData.isManager == "on") employeeData.isManager = true;
+                else employeeData.isManager = false;                
+                employees[i] = employeeData;
+                break;
+            }
+        }
+        resolve();
+    });
+}
 
 // provide the full array of "employee" objects 
 module.exports.getAllEmployees = () =>
@@ -127,13 +163,14 @@ module.exports.getEmployeeByNum = (num) =>
 {
     return new Promise( (resolve, reject) =>
     {
-        var employeesByNum = [];
+        var employeesByNum;
         for(var i = 0, j = 0; i < employees.length; i++)
         {
             if(employees[i].employeeNum == num)
             {
-                employeesByNum[j] = employees[i];
+                employeesByNum = employees[i];
                 j++;
+                break;
             }
         }
         // log         
