@@ -17,6 +17,7 @@ module.exports.initialize = () =>
                 reject(err);
             } else {
                 employees = JSON.parse(data);
+                empCount = employees.length;
                 //console.log("data-service::initialize()::Employee Count: " + employees.length); 
                 //console.log(employees[0]);                               
                 if (employees.length == 0) {

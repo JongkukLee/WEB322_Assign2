@@ -6,7 +6,7 @@
 *
 * Name: _Jongkuk Lee__________ Student ID: _127730158____ Date: _2017-06-23_____
 *
-* Online (Heroku) Link: __https://arcane-fjord-78560.herokuapp.com/______________
+* Online (Heroku) Link: __https://http://arcane-temple-37691.herokuapp.com/______________
 ********************************************************************************/
 
 const express = require("express");
@@ -60,11 +60,9 @@ app.get("/employees", (req, res) =>{
     dataService.getEmployeesByStatus(req.query.status).then( (data) =>
     {
       res.render("employeeList", { data: data, title: "Employees" });      
-      //res.json(data);
     })
     .catch( (errorMsg)=> {
       res.render("employeeList", { data: {}, title: "Employees" }); 
-      //res.json({message: errorMsg});
     });
   }
   else if(req.query.manager)
@@ -72,11 +70,9 @@ app.get("/employees", (req, res) =>{
     dataService.getEmployeesByManager(req.query.manager).then( (data) =>
     {
       res.render("employeeList", { data: data, title: "Employees" });        
-      //res.json(data);
     })
     .catch( (errorMsg)=> {
       res.render("employeeList", { data: {}, title: "Employees" });       
-      //res.json({message: errorMsg});
     });    
   }
   else if(req.query.department)
@@ -84,22 +80,18 @@ app.get("/employees", (req, res) =>{
     dataService.getEmployeesByDepartment(req.query.department).then( (data) =>
     {
       res.render("employeeList", { data: data, title: "Employees" });  
-      //res.json(data);
     })
     .catch( (errorMsg)=> {
       res.render("employeeList", { data: {}, title: "Employees" });       
-      //res.json({message: errorMsg});
     });     
   }
   else{
     dataService.getAllEmployees().then( (data) =>
     {
       res.render("employeeList", { data: data, title: "Employees" });        
-      //res.json(data);
     })
     .catch( (errorMsg)=> {
       res.render("employeeList", { data: {}, title: "Employees" });       
-      //res.json({message: errorMsg});
     });
   }
 
@@ -110,11 +102,9 @@ app.get("/employee/:empNum", (req,res) => {
     dataService.getEmployeeByNum(req.params.empNum).then( (data) =>
     {
       res.render("employee", { data: data });         
-      //res.json(data);
     })
     .catch( (errorMsg)=> {
       res.status(404).send("Employee Not Found");        
-      //res.json({message: errorMsg});
     });
 });
 
@@ -123,11 +113,9 @@ app.get("/managers", (req,res) => {
     dataService.getManagers().then( (data) =>
     {
       res.render("employeeList", { data: data, title: "Employees (Managers)" });      
-      //res.json(data);
     })
     .catch( (errorMsg)=> {
       res.render("employeeList", { data: {}, title: "Employees (Managers)" });      
-      //res.json({message: errorMsg});
     });
 });
 
@@ -136,11 +124,9 @@ app.get("/departments", (req,res) => {
     dataService.getDepartments().then( (data) =>
     {
       res.render("departmentList", { data: data, title: "Departments" });
-      //res.json(data);
     })
     .catch( (errorMsg)=> {
       res.render("departmentList", { data: {}, title: "Departments" });
-      //res.json({message: errorMsg});
     });  
 });
 
