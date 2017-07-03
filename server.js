@@ -1,5 +1,5 @@
 /*********************************************************************************
-* WEB322 – Assignment 04
+* WEB322 – Assignment 05
 * I declare that this assignment is my own work in accordance with Seneca Academic Policy. No part
 * of this assignment has been copied manually or electronically from any other source
 * (including 3rd party web sites) or distributed to other students.
@@ -98,15 +98,44 @@ app.get("/employees", (req, res) =>{
 });
 
 // setup route to listen on /employee/value 
-app.get("/employee/:empNum", (req,res) => {
-    dataService.getEmployeeByNum(req.params.empNum).then( (data) =>
-    {
-      res.render("employee", { data: data });         
-    })
-    .catch( (errorMsg)=> {
-      res.status(404).send("Employee Not Found");        
-    });
-});
+app.get("/employee/:empNum", (req, res) => { 
+ 
+  // initialize an empty object to store the values   
+  let viewData = {}; 
+ 
+  dataService.getEmployeeByNum(req.params.empNum) 
+  .then((data) => { 
+    console.log("server.js::app.get(/employee/:empNum, (req, res):::getEmployeeByNum:::successful!");      
+    viewData.data = data; //store employee data in the "viewData" object as "data" 
+  }).catch((e)=>{ 
+    console.log("server.js::app.get(/employee/:empNum, (req, res):::getEmployeeByNum:::fail!" + e);    
+    viewData.data = null; // set employee to null if there was an error  
+  }).then(dataService.getDepartments) 
+  .then((data) => { 
+      
+    viewData.departments = data; // store department data in the "viewData" object as "departments" 
+     
+      // loop through viewData.departments and once we have found the departmentId that matches 
+      // the employee's "department" value, add a "selected" property to the matching        // viewData.departments object 
+      //console.log("server.js::app.get(/employee/:empNum, (req, res):::getDeartments:::successful!" + viewData.departments);  
+     for (let i = 0; i < viewData.departments.length; i++) { 
+        if (viewData.departments[i].departmentId == viewData.data.department) {           
+          viewData.departments[i].selected = true; 
+        } 
+      } 
+     console.log("server.js::app.get(/employee/:empNum, (req, res):::getDeartments:::successful!");  
+  }).catch((e)=>{ 
+    console.log("server.js::app.get(/employee/:empNum, (req, res):::getDeartments:::fail!" + e);   
+    viewData.departments=[]; // set departments to empty if there was an error 
+  }).then(()=>{ 
+    if(viewData.data == null){ // if no employee - return an error           
+        res.status(404).send("Employee Not Found");    
+    }else{ 
+        console.log("server.js::app.get(/employee/:empNum, (req, res):::successful!" + viewData.data.firstName);
+        res.render("employee", { viewData: viewData }); // render the "employee" view 
+      } 
+  }); 
+}); 
 
 // setup route to listen on /managers 
 app.get("/managers", (req,res) => {
@@ -131,8 +160,14 @@ app.get("/departments", (req,res) => {
 });
 
 // setup route to add new employee
-app.get("/employees/add", (req,res) => {     
-  res.render("addEmployee"); 
+app.get("/employees/add", (req,res) => {
+    dataService.getDepartments().then( (data) =>
+    {
+      res.render("addEmployee", {departments: data});
+    })
+    .catch( (errorMsg)=> {
+      res.render("addEmployee", {departments: []});  
+    });
 });
 
 // setup POST route to add employees and redirect page
@@ -149,6 +184,51 @@ app.post("/employee/update", (req, res) => {
     console.log(req.body); 
     dataService.updateEmployee(req.body).then( () => {
       res.redirect("/employees"); 
+    });
+});
+
+// setup route to add new department`
+app.get("/departments/add", (req,res) => {     
+  res.render("addDepartment"); 
+});
+
+// setup POST route to add departments and redirect page
+app.post("/departments/add", (req, res) => { 
+    console.log(req.body);
+    dataService.addDepartment(req.body).then( () =>
+    {
+      res.redirect("/departments");
+    });
+}); 
+
+// setup POST route to update departments and redirect page
+app.post("/department/update", (req, res) => { 
+    console.log(req.body); 
+    dataService.updateDepartment(req.body).then( () => {
+      res.redirect("/departments"); 
+    });
+});
+
+// setup route to listen on /department/value 
+app.get("/department/:departmentId", (req,res) => {
+    dataService.getDepartmentById(req.params.departmentId).then( (data) =>
+    {
+      console.log("server.js::app.get(/department/:departmentId, (req,res):::" + data.departmentName);
+      res.render("department", { data: data });         
+    })
+    .catch( (errorMsg)=> {
+      res.status(404).send("Department Not Found");        
+    });
+});
+
+// setup route to listen on /employee/delete/value 
+app.get("/employee/delete/:empNum", (req,res) => {
+    dataService.deleteEmployeeByNum(req.params.empNum).then( () =>
+    {
+      res.redirect("/employees");      
+    })
+    .catch( (errorMsg)=> {
+      res.status(500).send("Unable to Remove Employee / Employee not found");        
     });
 });
 
