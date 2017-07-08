@@ -1,6 +1,8 @@
-let VERBOSE = true;
+let VERBOSE = false;
 
-const Sequelize = require('sequelize'); 
+const Sequelize = require('sequelize');
+
+// set the connection information
 var sequelize = new Sequelize
 (
     'der8rb6h09u13d', // Database
@@ -14,7 +16,7 @@ var sequelize = new Sequelize
     }
 ); 
 
-// Define models
+// Define models: Employee
 var Employee = sequelize.define('Employee', {
     employeeNum:{
         type:Sequelize.INTEGER,
@@ -36,7 +38,7 @@ var Employee = sequelize.define('Employee', {
     department:Sequelize.INTEGER,
     hireDate:Sequelize.STRING
 });
-
+// Define models: Department
 var Department  = sequelize.define('Department', {
     departmentId:{
         type:Sequelize.INTEGER,
@@ -46,137 +48,149 @@ var Department  = sequelize.define('Department', {
     departmentName:Sequelize.STRING
 });
 
-// Asynchronously reads the entire contents of a file
+// synchronize the Database with our models and automatically add the 
+// table if it does not exist
 module.exports.initialize = () =>
 {
     return new Promise( (resolve, reject) =>
     {
-        // synchronize the Database with our models and automatically add the 
-        // table if it does not exist
         sequelize.sync().then(function () {
                  resolve();
         });
     });
 };
 
-// provide the full array of "employee" objects 
+// provide the full "employee" objects 
 module.exports.getAllEmployees = () =>
 {
     return new Promise( (resolve, reject) =>
     {
         sequelize.sync().then(function () {        
-            // return all first names only
+            // return all fields
             Employee.findAll({ 
                 //attributes: ['firstName']
             }).then(function(data){
-                console.log("data-service::getAllEmployees():::successful!");
+                if (VERBOSE) console.log("data-service::\
+                        getAllEmployees():::successful!");
                 resolve(data);
             }).catch(function (error) {
-                console.log("data-service::getAllEmployees():::something went wrong!" + error);
+                if (VERBOSE) console.log("data-service::\
+                        getAllEmployees():::something went wrong!" + error);
                 reject("no results returned");
             });
         });
     });
 }
 
-// provide an array of "employee" objects whose status property matches 
+// provide an "employee" objects whose status property matches 
 module.exports.getEmployeesByStatus = (status) =>
 {
     return new Promise( (resolve, reject) =>
     {
         sequelize.sync().then(function () {        
-            // return all first names only
+            // return all fields
             Employee.findAll({ 
-                //attributes: ['firstName'],
-                where: { status: status } // retrieve employees with status ('Part Time', 'Full Time')
+                // retrieve employees with status ('Part Time', 'Full Time')
+                where: { status: status } 
             }).then(function(data){
-                console.log("data-service::getEmployeesByStatus():::successful!");
+                if (VERBOSE) console.log("data-service::\
+                        getEmployeesByStatus():::successful!");
                 resolve(data);
             }).catch(function (error) {
-                console.log("data-service::getEmployeesByStatus():::something went wrong!" + error);
+                if (VERBOSE) console.log("data-service::\
+                        getEmployeesByStatus():::something went wrong!" + error);
                 reject("no results returned");
             });
         });
     });
 }
 
-// provide an array of "employee" objects whose department property matches 
+// provide an "employee" objects whose department property matches 
 module.exports.getEmployeesByDepartment = (department) =>
 {
     return new Promise( (resolve, reject) =>
     {
         sequelize.sync().then(function () {        
-            // return all first names only
+            // return all fields
             Employee.findAll({ 
-                //attributes: ['firstName'],
-                where: { department: department } // retrieve employees with department code
+                // retrieve employees with department code
+                where: { department: department } 
             }).then(function(data){
-                console.log("data-service::getEmployeesByDepartment():::successful!");
+                if (VERBOSE) console.log("data-service::\
+                        getEmployeesByDepartment():::successful!");
                 resolve(data);
             }).catch(function (error) {
-                console.log("data-service::getEmployeesByDepartment():::something went wrong!" + error);
+                if (VERBOSE) console.log("data-service::\
+                        getEmployeesByDepartment():::something went wrong!" + error);
                 reject("no results returned");
             });
         });
     });
 }
-// provide an array of "employee" objects whose employeeManagerNum property matches 
+// provide an "employee" objects whose employeeManagerNum property matches 
 module.exports.getEmployeesByManager = (manager) =>
 {
     return new Promise( (resolve, reject) =>
     {
         sequelize.sync().then(function () {        
-            // return all first names only
+            // return all fields
             Employee.findAll({ 
-                //attributes: ['firstName'],
-                where: { employeeManagerNum: manager } // retrieve employees with manager number
+                // retrieve employees with manager number
+                where: { employeeManagerNum: manager } 
             }).then(function(data){
-                console.log("data-service::getEmployeesByManager():::successful!");
+                if (VERBOSE) console.log("data-service::\
+                        getEmployeesByManager():::successful!");
                 resolve(data);
             }).catch(function (error) {
-                console.log("data-service::getEmployeesByManager():::something went wrong!" + error);
+                if (VERBOSE) console.log("data-service::\
+                        getEmployeesByManager():::something went wrong!" + error);
                 reject("no results returned");
             });
         });
     });
 }
 
-// provide a single of "employee" object whose employeeNum property matches 
+// provide an "employee" object whose employeeNum property matches 
 module.exports.getEmployeeByNum = (num) =>
 {
     return new Promise( (resolve, reject) =>
     {
         sequelize.sync().then(function () {        
-            // return all first names only
+            // return all fields
             Employee.findAll({ 
-                //attributes: ['firstName'],
-                where: { employeeNum: num } // retrieve an employee with employee number
+                // retrieve an employee with employee number
+                where: { employeeNum: num } 
             }).then(function(data){
-                console.log("data-service::getEmployeeByNum():::successful!");
-                resolve(data[0]); // only provide the first object
+                if (VERBOSE)  console.log("data-service::\
+                        getEmployeeByNum():::successful!");
+                // only provide the first object
+                resolve(data[0]); 
             }).catch(function (error) {
-                console.log("data-service::getEmployeeByNum():::something went wrong!" + error);
+                if (VERBOSE)  console.log("data-service::\
+                        getEmployeeByNum():::something went wrong!" + error);
                 reject("no results returned");
             });
         });
     });
 }
 
-// provide an array of "employee" objects whose isManager property is true 
+// provide an "employee" objects whose isManager property is true 
 module.exports.getManagers = () =>
 {
     return new Promise( (resolve, reject) =>
     {
         sequelize.sync().then(function () {        
-            // return all first names only
+            // return all fields
             Employee.findAll({ 
-                //attributes: ['firstName'],
-                where: { isManager: true } // retrieve employees with isManager property
+                // retrieve employees with isManager property
+                where: { isManager: true } 
             }).then(function(data){
-                console.log("data-service::getManagers():::successful!");
+                if (VERBOSE) console.log("data-service::\
+                        getManagers():::successful!");
                 resolve(data);
             }).catch(function (error) {
-                console.log("data-service::getManagers():::something went wrong!" + error);
+                if (VERBOSE) console.log("data-service::\
+                        getManagers():::something went wrong!" + error);
                 reject("no results returned");
             });
         });
@@ -188,21 +202,22 @@ module.exports.getDepartments = function()
     return new Promise( (resolve, reject) =>
     {
         sequelize.sync().then(function () {        
-            // return all department names only
+            // return all fields
             Department.findAll({ 
-                //attributes: ['departmentName']
             }).then(function(data){
-                console.log("data-service::getDepartments():::successful!");
+                if (VERBOSE) console.log("data-service::\
+                        getDepartments():::successful!");
                 resolve(data);
             }).catch(function (error) {
-                console.log("data-service::getDepartments():::something went wrong!" + error);
+                if (VERBOSE) console.log("data-service::\
+                        getDepartments():::something went wrong!" + error);
                 reject("no results returned");
             });
         });
     });
 }
 
-// add employee
+// add an employee information
 module.exports.addEmploye = (employeeData) =>
 { 
     return new Promise( (resolve, reject) =>
@@ -210,7 +225,8 @@ module.exports.addEmploye = (employeeData) =>
         // any blank values ("") for properties are set to null
         for (var prop in employeeData)
         {
-            console.log("data-service::addEmploye():::-->" + employeeData[prop]+ "<--");          
+            if (VERBOSE) console.log("data-service::\
+                    addEmploye():::-->" + employeeData[prop]+ "<--");          
             if(employeeData[prop] == "") employeeData[prop] = null;
         }
 
@@ -235,17 +251,19 @@ module.exports.addEmploye = (employeeData) =>
                 department: employeeData.department,
                 hireDate: employeeData.hireDate
             }).then(function() { 
-                console.log("data-service::addEmploye():::successful!");                
+                if (VERBOSE) console.log("data-service::\
+                        addEmploye():::successful!");                
                 resolve();                
             }).catch(function (error) {
-                console.log("data-service::addEmploye():::something went wrong!::::" + error);
+                if (VERBOSE) console.log("data-service::\
+                        addEmploye():::something went wrong!::::" + error);
                 reject("unable to create employee");
             });
         });  
     });
 }
 
-// update employee
+// update an employee information
 module.exports.updateEmployee = (employeeData) =>
 {
     return new Promise( (resolve, reject) =>
@@ -253,7 +271,8 @@ module.exports.updateEmployee = (employeeData) =>
         // any blank values ("") for properties are set to null
         for (var prop in employeeData)
         {
-            console.log("data-service::updateEmployee():::-->" + employeeData[prop]+ "<--");          
+            if (VERBOSE) console.log("data-service::\
+                    updateEmployee():::-->" + employeeData[prop]+ "<--");          
             if(employeeData[prop] == "") employeeData[prop] = null;
         }
 
@@ -277,19 +296,22 @@ module.exports.updateEmployee = (employeeData) =>
                 department: employeeData.department,
                 hireDate: employeeData.hireDate
             },{
-                where: { employeeNum: employeeData.employeeNum } // only update user information with employee number
+                // only update user information with employee number
+                where: { employeeNum: employeeData.employeeNum } 
             }).then(function() { 
-                console.log("data-service::updateEmployee():::successful!");                
+                if (VERBOSE) console.log("data-service::\
+                        updateEmployee():::successful!");                
                 resolve();
             }).catch(function (error) {
-                console.log("data-service::updateEmployee():::something went wrong!" + error);
+                if (VERBOSE) console.log("data-service::\
+                        updateEmployee():::something went wrong!" + error);
                 reject("unable to update employee");
             });
         });  
     });
 }
 
-// add department
+// add a department information
 module.exports.addDepartment = (departmentData) =>
 {
     return new Promise( (resolve, reject) =>
@@ -303,17 +325,19 @@ module.exports.addDepartment = (departmentData) =>
                 departmentId: departmentData.departmentId,
                 departmentName: departmentData.departmentName
             }).then(function() { 
-                console.log("data-service::addDepartment():::successful!");
+                if (VERBOSE) console.log("data-service::\
+                        addDepartment():::successful!");
                 resolve();
             }).catch(function (error) {
-                console.log("data-service::addDepartment():::something went wrong!" + error);
+                if (VERBOSE) console.log("data-service::\
+                        addDepartment():::something went wrong!" + error);
                 reject("unable to create department");
             });
         });  
     });
 }
 
-// update department
+// update a department information
 module.exports.updateDepartment = (departmentData) =>
 {
     return new Promise( (resolve, reject) =>
@@ -327,40 +351,46 @@ module.exports.updateDepartment = (departmentData) =>
                 departmentId: departmentData.departmentId,
                 departmentName: departmentData.departmentName
             }, {
-                where: { departmentId: departmentData.departmentId } // only update department information with department id
+                // only update department information with department id
+                where: { departmentId: departmentData.departmentId } 
             }).then(function() { 
-                console.log("data-service::updateDepartment():::successful!");                
+                if (VERBOSE) console.log("data-service::\
+                        updateDepartment():::successful!");                
                 resolve();
             }).catch(function (error) {
-                console.log("data-service::updateDepartment():::something went wrong!" + error);
+                if (VERBOSE) console.log("data-service::\
+                        updateDepartment():::something went wrong!" + error);
                 reject("unable to update department");
             });
         });  
     });
 }
 
-// provide a single of "department" object whose department id property matches 
+// provide a "department" object whose department id property matches 
 module.exports.getDepartmentById = (id) =>
 {
     return new Promise( (resolve, reject) =>
     {
         sequelize.sync().then(function () {        
-            // return all first names only
+            // return fields
             Department.findAll({ 
-                //attributes: ['departmentName'],
-                where: { departmentId: id } // retrieve an department with department id
+                // retrieve an department with department id
+                where: { departmentId: id } 
             }).then(function(data){
-                console.log("data-service::getDepartmentById():::successful!");
-                resolve(data[0]); // only provide the first object
+                if (VERBOSE) console.log("data-service::\
+                        getDepartmentById():::successful!");
+                // only provide the first object
+                resolve(data[0]); 
             }).catch(function (error) {
-                console.log("data-service::getDepartmentById():::something went wrong!" + error);
+                if (VERBOSE) console.log("data-service::\
+                        getDepartmentById():::something went wrong!" + error);
                 reject("no results returned");
             });
         });
     });
 }
 
-// delete an employee 
+// delete an employee information
 module.exports.deleteEmployeeByNum = (empNum) =>
 {
     return new Promise( (resolve, reject) =>
@@ -369,12 +399,15 @@ module.exports.deleteEmployeeByNum = (empNum) =>
 
             // remove an employee from the database
             Employee.destroy({
-                where: { employeeNum: empNum } // only remove employee with employee number
+                // only remove employee with employee number
+                where: { employeeNum: empNum } 
             }).then(function () { 
-                console.log("data-service::deleteEmployeeByNum():::successful!");
+                if (VERBOSE) console.log("data-service::\
+                        deleteEmployeeByNum():::successful!");
                 resolve();
             }).catch(function (error) {
-                console.log("data-service::deleteEmployeeByNum():::something went wrong!" + error);
+                if (VERBOSE) console.log("data-service::\
+                        deleteEmployeeByNum():::something went wrong!" + error);
                 reject("unable to remove employee");
             });
         });
