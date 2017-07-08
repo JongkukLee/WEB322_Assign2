@@ -54,31 +54,7 @@ module.exports.initialize = () =>
         // synchronize the Database with our models and automatically add the 
         // table if it does not exist
         sequelize.sync().then(function () {
-            // create a new "Employee" and add it to the database
-            Employee.create({
-                title: 'Employee',
-                description: 'Employee Model'
-            }).then(function (employee) {
-                // you can now access the newly created Project via the variable project
-                console.log("data-service::initialize():::successful!");
-                resolve();
-            }).catch(function (error) {
-                console.log("data-service::initialize():::something went wrong!" + error);
-                reject("unable to sync the database");
-            });
-
-            // create a new "Department" and add it to the database
-            Department.create({
-                title: 'Department',
-                description: 'Department Model'
-            }).then(function (department) {
-                // you can now access the newly created Project via the variable project
-                console.log("data-service::initialize():::successful!");
-                resolve();
-            }).catch(function (error) {
-                console.log("data-service::initialize():::something went wrong!" + error);
-                reject("unable to sync the database");
-            });
+                 resolve();
         });
     });
 };
