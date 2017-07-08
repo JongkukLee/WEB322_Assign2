@@ -6,7 +6,7 @@
 *
 * Name: _Jongkuk Lee__________ Student ID: _127730158____ Date: _2017-07-08_____
 *
-* Online (Heroku) Link: __https://immense-atoll-85160.herokuapp.com/______________
+* Online (Heroku) Link: __https://salty-beyond-22421.herokuapp.com/______________
 ********************************************************************************/
 let VERBOSE = false;
 
