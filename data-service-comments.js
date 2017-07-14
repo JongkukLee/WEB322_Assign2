@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
-
-
-
 // define the content schema
 const commentSchema = new Schema({
   "comment_id": String,
@@ -23,7 +20,7 @@ const commentSchema = new Schema({
 });
 
 // to be defined on new connection (see initialize) 
-let Comment = mongoose.model("Comment", commentSchema);; 
+let Comment; //= mongoose.model("Comment", commentSchema);; 
 
 // create new connection
 // we are able to connect to our MongoDB instance 
@@ -31,8 +28,7 @@ module.exports.initialize = function ()
 {
     return new Promise(function (resolve, reject) {
 
-        let db = mongoose.createConnection("mongodb://<jlee465>:<Vkvkdi0^>@ds017258.mlab.com:17258/web322_a6");
-        
+        let db = mongoose.createConnection("mongodb://jlee465:Vkvkdi0^@ds017258.mlab.com:17258/web322_a6");
         db.on('error', (err)=>
         { 
             reject(err); // reject the promise with the provided error 
@@ -41,7 +37,7 @@ module.exports.initialize = function ()
         db.once('open', ()=>
         { 
            Comment = db.model("comments", commentSchema);            
-           resolve(newComment._id);
+           resolve();
         }); 
     }); 
 }; 
@@ -53,20 +49,19 @@ module.exports.addComment = (data) =>
     {
         data.postedDate = Date.now();
         let newComment = new Comment(data);
-        newComment.save( )
-        .exec()
-        .then((err) => 
+        newComment.save( (err) => 
         {
             if(err) 
             {
                 //console.log("There was an error saving the Kwik-E-Mart company");
-
-                reject();
+                console.log("data-service-comments:: addComment():::fail!" + err);
+                reject("There was an error saving the comment: " + err);
             } 
             else 
             {
+                console.log("data-service-comments:: addComment():::successful!-->" + newComment._id + "<--");                
                 //console.log("The Kwik-E-Mart company was saved to the web322_companies collection");
-                resove("There was an error saving the comment: " + err);
+                resolve(newComment._id);
             }
         });        
     });
@@ -76,24 +71,23 @@ module.exports.addComment = (data) =>
 
 module.exports.getAllComments = () =>
 {
-
     return new Promise(function (resolve, reject) 
     {
-
-        Company.find()
+        Comment.find()
         .sort({ postedDate : 1 })
         .exec()
         .then((comments) => 
         {
-            // return promise and pass the error that was "caught" 
-            // during the Comment.find() operation
-            if(err)
-            {
-                reject(err);
-            }
             //  comments will be an array of objects.
             // Each object will represent a document that matched the query
+            console.log("data-service-comments:: getAllComments():::successful!");   
             resolve(comments);
+        }).catch( (err)=> {
+
+            // return promise and pass the error that was "caught" 
+            // during the Comment.find() operation
+            console.log("data-service-comments:: getAllComments():::fail!" + err);                
+            reject(err);
         });
     });  
 }
@@ -103,43 +97,40 @@ module.exports.addReply = (data) =>
     return new Promise( function (resolve, reject) 
     {
         data.repliedDate  = Date.now();
-        
         //update inner record
         Comment.update(
-        {
-            _id: data.comment_id
-        }
+        {_id: data.comment_id}
         ,
-        {
-            $addToSet: 
-            {
-                $addToSet: { replies: data } 
-            }
-        })
+        {$addToSet: {replies: data}}
+        , 
+        { multi: false })   
         .exec()
-        .then((err) => 
+        .then(() => 
         {
-            if(err) 
-            {
-                //console.log("There was an error saving the Kwik-E-Mart company");
-
-                reject();
-            } 
-            else 
-            {
-                //console.log("The Kwik-E-Mart company was saved to the web322_companies collection");
-                resove("There was an error saving the comment: " + err);
-            }
-        });      
+            console.log("data-service-comments:: addReply():::successful!");                  
+            resolve();
+        }).catch((err) =>{
+            console.log("data-service-comments:: addReply():::fail!" + err);  
+            reject(err);
+        });         
+ 
     });
 }
 
-
-
-
-
-
-
-
-
-
+module.exports.removeTest = () =>
+{
+    return new Promise( function (resolve, reject) 
+    {
+        //update inner record
+        Comment.remove( { authorName: "Comment 1 Author"} )
+        //.exec()
+        .then(() => 
+        {
+            console.log("data-service-comments:: removeTest():::successful!");                  
+            resolve();
+        }).catch((err) =>{
+            console.log("data-service-comments:: removeTest():::fail!" + err);  
+            reject(err);
+        });
+    });
+}

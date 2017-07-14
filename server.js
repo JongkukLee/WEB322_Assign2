@@ -278,10 +278,17 @@ dataServiceComments.initialize()
         commentText: "Reply Text 1" 
       }).then(dataServiceComments.getAllComments) 
       .then((data) => { 
-        console.log("comment: " + data[data.length - 1]);         process.exit(); 
-      }); 
+        //console.log("comment: " + data[data.length - 1]);         
+
+      }).then(dataServiceComments.removeTest).then(() =>
+      {
+        process.exit(); 
+      })
+      
+      ; 
     }); 
   }).catch((err) => { 
-    console.log("Error: " + err);     process.exit(); 
+    console.log("Error: " + err);     
+    process.exit(); 
   }); 
 
