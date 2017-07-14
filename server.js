@@ -15,6 +15,7 @@ const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser'); 
 var app = express();
 var dataService = require("./data-service.js");
+var dataServiceComments = require("./data-service-comments.js");
 var HTTP_PORT = process.env.PORT || 8080;
 
 // set to use static pages or images
@@ -252,6 +253,7 @@ app.use((req, res) => {
 });
 
 // setup http server to listen on HTTP_PORT
+/*
 dataService.initialize().then( () => {
   app.listen(HTTP_PORT, onHttpStart);
 })
@@ -259,3 +261,27 @@ dataService.initialize().then( () => {
   if (VERBOSE) console.log("server.js::dataService.initialize().then().catch()");
   console.log(errorMsg);
 });
+*/
+
+dataServiceComments.initialize() 
+  .then(() => { 
+    dataServiceComments.addComment({       
+      authorName: "Comment 1 Author",       
+      authorEmail: "comment1@mail.com", 
+      subject: "Comment 1", 
+      commentText: "Comment Text 1" 
+    }).then((id) => { 
+      dataServiceComments.addReply({         
+        comment_id: id,         
+        authorName: "Reply 1 Author",         
+        authorEmail: "reply1@mail.com",         
+        commentText: "Reply Text 1" 
+      }).then(dataServiceComments.getAllComments) 
+      .then((data) => { 
+        console.log("comment: " + data[data.length - 1]);         process.exit(); 
+      }); 
+    }); 
+  }).catch((err) => { 
+    console.log("Error: " + err);     process.exit(); 
+  }); 
+
