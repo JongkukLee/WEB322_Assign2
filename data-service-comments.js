@@ -27,8 +27,8 @@ let Comment = mongoose.model("Comment", commentSchema);;
 
 // create new connection
 // we are able to connect to our MongoDB instance 
-module.exports.initialize = function () {
-
+module.exports.initialize = function () 
+{
     return new Promise(function (resolve, reject) {
 
         let db = mongoose.createConnection("mongodb://<jlee465>:<Vkvkdi0^>@ds017258.mlab.com:17258/web322_a6");
