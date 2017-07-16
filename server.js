@@ -47,10 +47,18 @@ function onHttpStart() {
 app.get("/", function(req,res){
   res.render("home");
 });
-// setup route to listen on /about
-app.get("/about", function(req,res){
-  res.render("about");
-});
+// // setup route to listen on /about
+// // retrieve all comments from Mongo DB
+// app.get("/about", function(req,res){
+//   dataServiceComments.getAllComments().then( (dataFromPromise) =>
+//   {
+//     res.render("about", { data: dataFromPromise });        
+//   })
+//   .catch( (errorMsg)=> {
+//     res.render("about");       
+//   });
+// });
+
 // setup route to listen on /employees
 app.get("/employees", (req, res) =>{
 
@@ -247,48 +255,85 @@ app.get("/employee/delete/:empNum", (req,res) => {
     });
 });
 
+
+// setup POST route to add a comment and redirect the page
+app.post("/about/addComment", (req, res) => { 
+    if (VERBOSE) console.log(req.body);
+    dataServiceComments.addComment(req.body).then( () =>
+    {
+      res.redirect("/about");
+    }).catch((err)=>
+    {
+      console.log(err);
+    });
+}); 
+
+// setup POST route to update replies and redirect page
+app.post("/about/addReply", (req, res) => { 
+    if (VERBOSE) console.log(req.body); 
+    dataServiceComments.addReply(req.body).then( () => {
+      res.redirect("/about"); 
+    }).catch((err)=>
+    {
+      console.log(err);
+    });
+});
+
+// setup route to listen on /about
+// retrieve all comments from Mongo DB
+app.get("/about", function(req,res){
+  dataServiceComments.getAllComments().then( (dataFromPromise) =>
+  {
+    console.log(dataFromPromise[0]);
+    res.render("about", { data: dataFromPromise });        
+  })
+  .catch( (errorMsg)=> {
+    res.render("about");       
+  });
+});
+
 // setup the no matching route
 app.use((req, res) => {
   res.status(404).send("Page Not Found");
 });
 
 // setup http server to listen on HTTP_PORT
-/*
-dataService.initialize().then( () => {
+dataService.initialize()
+.then( dataServiceComments.initialize )
+.then( () => {
   app.listen(HTTP_PORT, onHttpStart);
 })
 .catch( (errorMsg) => {
   if (VERBOSE) console.log("server.js::dataService.initialize().then().catch()");
-  console.log(errorMsg);
+  console.log("unable to start dataService");
 });
-*/
 
-dataServiceComments.initialize() 
-  .then(() => { 
-    dataServiceComments.addComment({       
-      authorName: "Comment 1 Author",       
-      authorEmail: "comment1@mail.com", 
-      subject: "Comment 1", 
-      commentText: "Comment Text 1" 
-    }).then((id) => { 
-      dataServiceComments.addReply({         
-        comment_id: id,         
-        authorName: "Reply 1 Author",         
-        authorEmail: "reply1@mail.com",         
-        commentText: "Reply Text 1" 
-      }).then(dataServiceComments.getAllComments) 
-      .then((data) => { 
-        //console.log("comment: " + data[data.length - 1]);         
+// dataServiceComments.initialize() 
+//   .then(() => { 
+//     dataServiceComments.addComment({       
+//       authorName: "Comment 1 Author",       
+//       authorEmail: "comment1@mail.com", 
+//       subject: "Comment 1", 
+//       commentText: "Comment Text 1" 
+//     }).then((id) => { 
+//       dataServiceComments.addReply({         
+//         comment_id: id,         
+//         authorName: "Reply 1 Author",         
+//         authorEmail: "reply1@mail.com",         
+//         commentText: "Reply Text 1" 
+//       }).then(dataServiceComments.getAllComments) 
+//       .then((data) => { 
+//         //console.log("comment: " + data[data.length - 1]);         
 
-      }).then(dataServiceComments.removeTest).then(() =>
-      {
-        process.exit(); 
-      })
+//       })
+//       // .then(dataServiceComments.removeTest).then(() =>
+//       // {
+//       //   process.exit(); 
+//       // })
       
-      ; 
-    }); 
-  }).catch((err) => { 
-    console.log("Error: " + err);     
-    process.exit(); 
-  }); 
-
+//       ; 
+//     }); 
+//   }).catch((err) => { 
+//     console.log("Error: " + err);     
+//     process.exit(); 
+//   });

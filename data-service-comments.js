@@ -3,11 +3,11 @@ let Schema = mongoose.Schema;
 
 // define the content schema
 const commentSchema = new Schema({
-  "comment_id": String,
   "authorName": String,
   "authorEmail": String,
+  "subject": String,  
   "commentText": String,
-  "postedDate ": {
+  "postedDate": {
     type: Date,
     default: Date.now
   },
@@ -45,6 +45,7 @@ module.exports.initialize = function ()
 // add a new Comment to the database 
 module.exports.addComment = (data) =>
 {
+    console.log("data-service-comments::addComment():::data:::" + data);
     return new Promise( function (resolve, reject) 
     {
         data.postedDate = Date.now();
@@ -54,12 +55,12 @@ module.exports.addComment = (data) =>
             if(err) 
             {
                 //console.log("There was an error saving the Kwik-E-Mart company");
-                console.log("data-service-comments:: addComment():::fail!" + err);
+                console.log("data-service-comments::addComment():::fail!" + err);
                 reject("There was an error saving the comment: " + err);
             } 
             else 
             {
-                console.log("data-service-comments:: addComment():::successful!-->" + newComment._id + "<--");                
+                console.log("data-service-comments::addComment():::successful!-->" + newComment._id + "<--");                
                 //console.log("The Kwik-E-Mart company was saved to the web322_companies collection");
                 resolve(newComment._id);
             }
@@ -94,6 +95,7 @@ module.exports.getAllComments = () =>
 
 module.exports.addReply = (data) =>
 {
+    console.log("data-service-comments::addReply():::data:::" + data);    
     return new Promise( function (resolve, reject) 
     {
         data.repliedDate  = Date.now();
@@ -107,10 +109,10 @@ module.exports.addReply = (data) =>
         .exec()
         .then(() => 
         {
-            console.log("data-service-comments:: addReply():::successful!");                  
+            console.log("data-service-comments::addReply():::successful!");                  
             resolve();
         }).catch((err) =>{
-            console.log("data-service-comments:: addReply():::fail!" + err);  
+            console.log("data-service-comments::addReply():::fail!" + err);  
             reject(err);
         });         
  
