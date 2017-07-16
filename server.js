@@ -1,12 +1,12 @@
 /*********************************************************************************
-* WEB322 – Assignment 05
+* WEB322 – Assignment 06
 * I declare that this assignment is my own work in accordance with Seneca Academic Policy. No part
 * of this assignment has been copied manually or electronically from any other source
 * (including 3rd party web sites) or distributed to other students.
 *
 * Name: _Jongkuk Lee__________ Student ID: _127730158____ Date: _2017-07-08_____
 *
-* Online (Heroku) Link: __https://immense-atoll-85160.herokuapp.com/______________
+* Online (Heroku) Link: __https://afternoon-escarpment-51015.herokuapp.com/______________
 ********************************************************************************/
 let VERBOSE = false;
 
