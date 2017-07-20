@@ -1,3 +1,5 @@
+let VERBOSE = false;
+
 const mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
@@ -20,7 +22,7 @@ const commentSchema = new Schema({
 });
 
 // to be defined on new connection (see initialize) 
-let Comment; //= mongoose.model("Comment", commentSchema);; 
+let Comment; 
 
 // create new connection
 // we are able to connect to our MongoDB instance 
@@ -45,7 +47,6 @@ module.exports.initialize = function ()
 // add a new Comment to the database 
 module.exports.addComment = (data) =>
 {
-    console.log("data-service-comments::addComment():::data:::" + data);
     return new Promise( function (resolve, reject) 
     {
         data.postedDate = Date.now();
@@ -55,21 +56,19 @@ module.exports.addComment = (data) =>
             if(err) 
             {
                 //console.log("There was an error saving the Kwik-E-Mart company");
-                console.log("data-service-comments::addComment():::fail!" + err);
+                if (VERBOSE) console.log("data-service-comments::addComment():::fail!" + err);
                 reject("There was an error saving the comment: " + err);
             } 
             else 
             {
-                console.log("data-service-comments::addComment():::successful!-->" + newComment._id + "<--");                
-                //console.log("The Kwik-E-Mart company was saved to the web322_companies collection");
+                if (VERBOSE) console.log("data-service-comments::addComment():::successful!-->" + newComment._id + "<--");
                 resolve(newComment._id);
             }
         });        
     });
-  // exit the program after saving
-  // process.exit();
 };
 
+// return all comments
 module.exports.getAllComments = () =>
 {
     return new Promise(function (resolve, reject) 
@@ -81,21 +80,21 @@ module.exports.getAllComments = () =>
         {
             //  comments will be an array of objects.
             // Each object will represent a document that matched the query
-            console.log("data-service-comments:: getAllComments():::successful!");   
+            if (VERBOSE) console.log("data-service-comments:: getAllComments():::successful!");   
             resolve(comments);
         }).catch( (err)=> {
 
             // return promise and pass the error that was "caught" 
             // during the Comment.find() operation
-            console.log("data-service-comments:: getAllComments():::fail!" + err);                
+            if (VERBOSE) console.log("data-service-comments:: getAllComments():::fail!" + err);                
             reject(err);
         });
     });  
 }
 
+// add a new Reply to an existing Comment
 module.exports.addReply = (data) =>
 {
-    console.log("data-service-comments::addReply():::data:::" + data);    
     return new Promise( function (resolve, reject) 
     {
         data.repliedDate  = Date.now();
@@ -109,30 +108,12 @@ module.exports.addReply = (data) =>
         .exec()
         .then(() => 
         {
-            console.log("data-service-comments::addReply():::successful!");                  
+            if (VERBOSE) console.log("data-service-comments::addReply():::successful!");                  
             resolve();
         }).catch((err) =>{
             console.log("data-service-comments::addReply():::fail!" + err);  
-            reject(err);
+            if (VERBOSE) reject(err);
         });         
  
-    });
-}
-
-module.exports.removeTest = () =>
-{
-    return new Promise( function (resolve, reject) 
-    {
-        //update inner record
-        Comment.remove( { authorName: "Comment 1 Author"} )
-        //.exec()
-        .then(() => 
-        {
-            console.log("data-service-comments:: removeTest():::successful!");                  
-            resolve();
-        }).catch((err) =>{
-            console.log("data-service-comments:: removeTest():::fail!" + err);  
-            reject(err);
-        });
     });
 }
