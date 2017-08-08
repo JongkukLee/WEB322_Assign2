@@ -364,6 +364,25 @@ app.get("/logout", function(req,res) {
   res.redirect("/");
 });
 
+// update password route
+app.get("/api/updatePassword", function(req,res) {
+
+  dataServiceAuth.checkUser(req.body).then(()=>
+  {
+    dataServiceAuth.updatePassword(req.body).then( () =>
+    {
+      res.json({successMessage: "Password changed successfully for user: " + req.body.user});
+    })
+    .catch( (err)=> {
+      res.json({errorMessage: err});
+    });
+  })
+  .catch((err)=>
+  {
+    res.json({errorMessage: err});
+  })
+});
+
 // setup the no matching route
 app.use((req, res) => {
   res.status(404).send("Page Not Found");

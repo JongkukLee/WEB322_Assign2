@@ -1,5 +1,6 @@
 let VERBOSE = false;
 
+const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
@@ -44,6 +45,20 @@ module.exports.registerUser = function (userData)
         }
         else
         {
+            // replace the user entered password to hashed version
+            bcrypt.genSalt(10, function(err, salt) { // Generate a "salt" using 10 rounds 
+                bcrypt.hash("myPassword123", salt, function(err, hash) { // encrypt the password: "myPassword123"
+                    // If there was an error 
+                    if(err) {
+                        reject("There was an error encrypting the password");
+                    }
+                    // TODO: Store the resulting "hash" value in the DB
+                    else {
+                        userData.password = hash;
+                    }
+                });
+            });
+
             let newUser = new User(userData);
             newUser.save( (err) => 
             {
@@ -83,12 +98,20 @@ module.exports.checkUser = function (userData)
             // if users is an empty array, reject 
             if(user.length == 0)
                 reject("Unable to find user: " + userData.user);
+            
+            // compare value from the DB and input value 
+            bcrypt.compare("myPassword123", user[0].password).then((res) => {
+                if( res === false)
+                    reject("Unable to find user: " + userData.user);
+                else
+                    resolve();
+            });
             // passwords does not match
-            if(user[0].password != userData.password)
-                reject("Incorrect Password for user: " + userData.user);
-            // passwords match
-            else
-                resolve();
+            // if(user[0].password != userData.password)
+            //     reject("Incorrect Password for user: " + userData.user);
+            // // passwords match
+            // else
+            //     resolve();
         }).catch( (err)=> {
 
             // return promise and pass the error that was "caught" 
@@ -100,7 +123,48 @@ module.exports.checkUser = function (userData)
     });
 };
 
+// update user's password
+module.exports.updatePassword = function (userData) 
+{
+    return new Promise(function (resolve, reject) {
+        // .password and .password2 do not match
+        if(userData.password !== userData.password2)
+        {
+            reject("Passwords do not match");
+        }
+        else
+        {
+            // replace the user entered password to hashed version
+            bcrypt.genSalt(10, function(err, salt) { // Generate a "salt" using 10 rounds 
+                bcrypt.hash("myPassword123", salt, function(err, hash) { // encrypt the password: "myPassword123"
+                    // If there was an error 
+                    if(err) {
+                        reject("There was an error encrypting the password");
+                    }
+                    // TODO: Store the resulting "hash" value in the DB
+                    else {
+                        userData.password = hash;
+                    }
+                });
+            });
 
+            let newUser = new User(userData);
+            User.update({ user: userData.user }, 
+            { $set: { password: hash } }, 
+            { multi: false }) 
+            .exec() 
+            .then((data)=>
+            {
+                if (VERBOSE) console.log("data-service-auth::updatePassword():::successful!");
+                resolve();
 
-
+            })
+            .catch((err)=>
+            {
+                if (VERBOSE) console.log("data-service-auth::updatePassword():::fail!" + err);
+                reject("There was an error updating the password for " + err);
+            });
+        }
+    });
+};
 
