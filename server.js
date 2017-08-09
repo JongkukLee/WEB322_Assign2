@@ -1,10 +1,10 @@
 /*********************************************************************************
-* WEB322 – Assignment 07
+* WEB322 – Assignment 08
 * I declare that this assignment is my own work in accordance with Seneca Academic Policy. No part
 * of this assignment has been copied manually or electronically from any other source
 * (including 3rd party web sites) or distributed to other students.
 *
-* Name: _Jongkuk Lee__________ Student ID: _127730158____ Date: _2017-08-04_____
+* Name: _Jongkuk Lee__________ Student ID: _127730158____ Date: _2017-08-11_____
 *
 * Online (Heroku) Link: __https://afternoon-escarpment-51015.herokuapp.com/______________
 ********************************************************************************/
@@ -47,6 +47,8 @@ app.use(clientSessions({
   duration: 2 * 60 * 1000,
   activeDuration: 1000 * 60
 }));
+
+app.use(bodyParser.json());
 
 // custom middleware function to ensure that all of 
 // your templates will have access to a "session" object 
@@ -365,7 +367,7 @@ app.get("/logout", function(req,res) {
 });
 
 // update password route
-app.get("/api/updatePassword", function(req,res) {
+app.post("/api/updatePassword", function(req,res) {
 
   dataServiceAuth.checkUser(req.body).then(()=>
   {

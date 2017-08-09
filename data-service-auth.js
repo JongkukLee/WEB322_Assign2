@@ -47,7 +47,7 @@ module.exports.registerUser = function (userData)
         {
             // replace the user entered password to hashed version
             bcrypt.genSalt(10, function(err, salt) { // Generate a "salt" using 10 rounds 
-                bcrypt.hash("myPassword123", salt, function(err, hash) { // encrypt the password: "myPassword123"
+                bcrypt.hash(userData.password, salt, function(err, hash) { // encrypt the password: "myPassword123"
                     // If there was an error 
                     if(err) {
                         reject("There was an error encrypting the password");
@@ -55,29 +55,50 @@ module.exports.registerUser = function (userData)
                     // TODO: Store the resulting "hash" value in the DB
                     else {
                         userData.password = hash;
+                        if (VERBOSE) console.log("data-service-auth::registerUser():::userData.password: " + userData.password);
+                        
+                        let newUser = new User(userData);
+                        newUser.save( (err) => 
+                        {
+                            if(err) 
+                            {
+                                if (VERBOSE) console.log("data-service-auth::registerUser():::fail!" + err);
+                                // err.code is 11000 (duplicate key), reject 
+                                if(err.code === 11000)
+                                    reject("User Name already taken");
+                                // err.code is not 11000, reject 
+                                else
+                                    reject("There was an error creating the user: " + err);
+                            } 
+                            else 
+                            {
+                                if (VERBOSE) console.log("data-service-auth::registerUser():::successful!");
+                                resolve();
+                            }
+                        });                    
                     }
                 });
             });
 
-            let newUser = new User(userData);
-            newUser.save( (err) => 
-            {
-                if(err) 
-                {
-                    if (VERBOSE) console.log("data-service-auth::registerUser():::fail!" + err);
-                    // err.code is 11000 (duplicate key), reject 
-                    if(err.code === 11000)
-                        reject("User Name already taken");
-                    // err.code is not 11000, reject 
-                    else
-                        reject("There was an error creating the user: " + err);
-                } 
-                else 
-                {
-                    if (VERBOSE) console.log("data-service-auth::registerUser():::successful!");
-                    resolve();
-                }
-            });
+            // let newUser = new User(userData);
+            // newUser.save( (err) => 
+            // {
+            //     if(err) 
+            //     {
+            //         if (VERBOSE) console.log("data-service-auth::registerUser():::fail!" + err);
+            //         // err.code is 11000 (duplicate key), reject 
+            //         if(err.code === 11000)
+            //             reject("User Name already taken");
+            //         // err.code is not 11000, reject 
+            //         else
+            //             reject("There was an error creating the user: " + err);
+            //     } 
+            //     else 
+            //     {
+            //         if (VERBOSE) console.log("data-service-auth::registerUser():::successful!");
+            //         resolve();
+            //     }
+            // });
         }
 
     });
@@ -100,7 +121,9 @@ module.exports.checkUser = function (userData)
                 reject("Unable to find user: " + userData.user);
             
             // compare value from the DB and input value 
-            bcrypt.compare("myPassword123", user[0].password).then((res) => {
+            var passwd = userData.password;
+            if(userData.currentPassword) passwd = userData.currentPassword;
+            bcrypt.compare(passwd, user[0].password).then((res) => {
                 if( res === false)
                     reject("Unable to find user: " + userData.user);
                 else
@@ -136,7 +159,7 @@ module.exports.updatePassword = function (userData)
         {
             // replace the user entered password to hashed version
             bcrypt.genSalt(10, function(err, salt) { // Generate a "salt" using 10 rounds 
-                bcrypt.hash("myPassword123", salt, function(err, hash) { // encrypt the password: "myPassword123"
+                bcrypt.hash(userData.password, salt, function(err, hash) { // encrypt the password: "myPassword123"
                     // If there was an error 
                     if(err) {
                         reject("There was an error encrypting the password");
@@ -144,26 +167,44 @@ module.exports.updatePassword = function (userData)
                     // TODO: Store the resulting "hash" value in the DB
                     else {
                         userData.password = hash;
+                        if (VERBOSE) console.log("data-service-auth::registerUser():::userData.password: " + userData.password);
+
+                        let newUser = new User(userData);
+                        User.update({ user: userData.user }, 
+                        { $set: { password: hash } }, 
+                        { multi: false }) 
+                        .exec() 
+                        .then((data)=>
+                        {
+                            if (VERBOSE) console.log("data-service-auth::updatePassword():::successful!");
+                            resolve();
+
+                        })
+                        .catch((err)=>
+                        {
+                            if (VERBOSE) console.log("data-service-auth::updatePassword():::fail!" + err);
+                            reject("There was an error updating the password for " + err);
+                        });                        
                     }
                 });
             });
 
-            let newUser = new User(userData);
-            User.update({ user: userData.user }, 
-            { $set: { password: hash } }, 
-            { multi: false }) 
-            .exec() 
-            .then((data)=>
-            {
-                if (VERBOSE) console.log("data-service-auth::updatePassword():::successful!");
-                resolve();
+            // let newUser = new User(userData);
+            // User.update({ user: userData.user }, 
+            // { $set: { password: hash } }, 
+            // { multi: false }) 
+            // .exec() 
+            // .then((data)=>
+            // {
+            //     if (VERBOSE) console.log("data-service-auth::updatePassword():::successful!");
+            //     resolve();
 
-            })
-            .catch((err)=>
-            {
-                if (VERBOSE) console.log("data-service-auth::updatePassword():::fail!" + err);
-                reject("There was an error updating the password for " + err);
-            });
+            // })
+            // .catch((err)=>
+            // {
+            //     if (VERBOSE) console.log("data-service-auth::updatePassword():::fail!" + err);
+            //     reject("There was an error updating the password for " + err);
+            // });
         }
     });
 };

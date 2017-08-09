@@ -71,7 +71,7 @@
 	<div class="modal fade" id="profileModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="profileModalTitle">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
-				<form onsubmit="requestPasswordChange('1'); return false;">
+				<form onsubmit="requestPasswordChange({{session.user.username}}); return false;">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 						<h4 class="modal-title" id="profileModalTitle">Profile</h4>
